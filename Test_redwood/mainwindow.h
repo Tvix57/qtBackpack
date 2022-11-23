@@ -3,6 +3,8 @@
 
 #include <QMainWindow>
 
+#include "gamefield.h"
+
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
 QT_END_NAMESPACE
@@ -18,7 +20,10 @@ public:
 private slots:
     void on_exit_btn_clicked();
 
+    void on_new_game_btn_clicked();
+
 private:
     Ui::MainWindow *ui;
+    GameField * game_field_;
 };
 #endif // MAINWINDOW_H
