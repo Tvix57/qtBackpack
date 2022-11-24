@@ -8,15 +8,11 @@ GameField::GameField(QWidget *parent) :
     ui(new Ui::GameField)
 {
     ui->setupUi(this);
-    ui->item_wgt->show();
-    ui->inventory_wgt->show();
     connect(ui->main_btn, SIGNAL(clicked()), SIGNAL(showMenu()));
+
 }
 
-GameField::~GameField()
-{
-    delete ui;
-}
+GameField::~GameField() { delete ui; }
 
 void GameField::on_inventory_wgt_itemClicked(QTableWidgetItem *item) {
     if (item) {
@@ -54,5 +50,15 @@ void GameField::on_inventory_wgt_itemClicked(QTableWidgetItem *item) {
 //        setItem(1, 1, item);
 
 
+    }
+}
+
+void GameField::on_inventory_wgt_currentItemChanged(QTableWidgetItem *current, QTableWidgetItem *previous)
+{
+    if (current && previous) {
+        if(current->whatsThis() == previous->whatsThis()) {
+            int cur_num = current->data(Qt::EditRole).toInt() + previous->data(Qt::EditRole).toInt();
+            current->setData(Qt::EditRole, cur_num);
+        }
     }
 }

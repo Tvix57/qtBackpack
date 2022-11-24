@@ -5,10 +5,11 @@ Inventory::Inventory(QWidget *parent) :
     QTableWidget(parent)
 {
 
-
+    this->setItem(0, 0,nullptr);
+//    for (auto &it, items()) {
+//        setItem(0,0, nullptr);
+//    }
 }
-
-//Inventory::~Inventory() { delete ui; }
 
 //void Inventory::mousePressEvent(QMouseEvent *event) {
 //    if (event->button() == Qt::RightButton ) {
@@ -18,7 +19,7 @@ Inventory::Inventory(QWidget *parent) :
 
 //void Inventory::dropEvent(QDropEvent *event)
 //{
-////    event->
+//    event->
 //    itemAt(event->pos());
 //}
 
