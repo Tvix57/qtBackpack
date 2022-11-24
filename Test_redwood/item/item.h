@@ -2,6 +2,13 @@
 #define ITEM_H
 
 #include <QWidget>
+#include <QResource>
+#include <QPicture>
+
+enum ItemType {
+    Apple,
+    Water
+};
 
 namespace Ui {
 class Item;
@@ -17,7 +24,9 @@ public:
 
 private:
     Ui::Item *ui;
-    int count_;
+    ItemType type;
+    QResource image_dir_;
+
 };
 
 #endif // ITEM_H

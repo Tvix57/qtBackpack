@@ -2,6 +2,7 @@
 #define GAMEFIELD_H
 
 #include <QWidget>
+#include <QTableWidgetItem>
 
 namespace Ui {
 class GameField;
@@ -16,6 +17,8 @@ public:
     ~GameField();
 
 private slots:
+
+    void on_inventory_wgt_itemClicked(QTableWidgetItem *item);
 
 signals:
     void showMenu();

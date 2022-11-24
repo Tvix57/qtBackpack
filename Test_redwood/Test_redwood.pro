@@ -28,7 +28,6 @@ HEADERS += \
 
 FORMS += \
     field/gamefield.ui \
-    inventory/inventory.ui \
     item/item.ui \
     mainwindow.ui
 
