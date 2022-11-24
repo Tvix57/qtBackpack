@@ -17,7 +17,7 @@ public:
     explicit Inventory(QWidget *parent = nullptr);
 //    ~Inventory();
 //    virtual void mousePressEvent(QMouseEvent *event) override;
-//    virtual void dropEvent(QDropEvent *event) override;
+    virtual void dropEvent(QDropEvent *event) override;
 
 private slots:
 

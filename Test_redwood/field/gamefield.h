@@ -18,9 +18,9 @@ public:
 
 private slots:
 
-    void on_inventory_wgt_itemClicked(QTableWidgetItem *item);
 
-    void on_inventory_wgt_currentItemChanged(QTableWidgetItem *current, QTableWidgetItem *previous);
+    void on_inventory_wgt_cellClicked(int row, int column);
+
 
 signals:
     void showMenu();

@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>202</width>
-    <height>175</height>
+    <height>176</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -59,7 +59,7 @@
       <set>QAbstractItemView::AnyKeyPressed|QAbstractItemView::EditKeyPressed</set>
      </property>
      <property name="dragEnabled">
-      <bool>false</bool>
+      <bool>true</bool>
      </property>
      <property name="dragDropOverwriteMode">
       <bool>true</bool>
@@ -68,7 +68,7 @@
       <enum>QAbstractItemView::DragDrop</enum>
      </property>
      <property name="defaultDropAction">
-      <enum>Qt::IgnoreAction</enum>
+      <enum>Qt::LinkAction</enum>
      </property>
      <property name="selectionMode">
       <enum>QAbstractItemView::ExtendedSelection</enum>

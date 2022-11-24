@@ -4,11 +4,10 @@
 Inventory::Inventory(QWidget *parent) :
     QTableWidget(parent)
 {
-
-    this->setItem(0, 0,nullptr);
 //    for (auto &it, items()) {
 //        setItem(0,0, nullptr);
 //    }
+
 }
 
 //void Inventory::mousePressEvent(QMouseEvent *event) {
@@ -17,11 +16,10 @@ Inventory::Inventory(QWidget *parent) :
 //    }
 //}
 
-//void Inventory::dropEvent(QDropEvent *event)
-//{
-//    event->
-//    itemAt(event->pos());
-//}
+void Inventory::dropEvent(QDropEvent *event) {
+//    event->mimeData()
+//    item(event->pos());
+}
 
 //void Inventory::on_table_wgt_currentItemChanged(QTableWidgetItem *current, QTableWidgetItem *previous) {
 //    if (current && previous) {

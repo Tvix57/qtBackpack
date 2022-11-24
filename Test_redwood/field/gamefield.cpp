@@ -5,60 +5,41 @@
 
 GameField::GameField(QWidget *parent) :
     QWidget(parent),
-    ui(new Ui::GameField)
-{
+    ui(new Ui::GameField) {
     ui->setupUi(this);
     connect(ui->main_btn, SIGNAL(clicked()), SIGNAL(showMenu()));
-
+    connect(ui->main_btn, SIGNAL(clicked()), SIGNAL(setEnabled()));
+    ui->inventory_wgt->setParent(this);
 }
 
 GameField::~GameField() { delete ui; }
 
-void GameField::on_inventory_wgt_itemClicked(QTableWidgetItem *item) {
+void GameField::on_inventory_wgt_cellClicked(int row, int column) {
+    auto item = ui->inventory_wgt->item(row, column);
     if (item) {
-
-        item->setWhatsThis("Apple");
-        int num = item->data(Qt::EditRole).toInt();
-        item->setData(Qt::EditRole, num+1);
+        QVariant val = item->data(Qt::EditRole);
+        if (val.) {
+            int num = val.toInt();
+            if (val.toInt() > 1) {
+                item->setData(Qt::EditRole, num-1);
+            } else {
+                item->setData(Qt::EditRole, "");
+            }
+        } else {
+            ui->inventory_wgt->removeCellWidget(row, column);
+        }
     } else {
-
-         item = new  QTableWidgetItem();
-        QIcon ico;
+        item = new  QTableWidgetItem();
+//        QIcon ico;
         QResource res;
     //    res.registerResource()
-        ico.addFile(":/res/apple_icon.png");
-    //    item->setIcon(ico);
-
+//        ico.addFile(":/res/apple_icon.png");
+        item->setBackground(QBrush(QPixmap(":/res/apple_icon.png")));
         item->setWhatsThis("Apple");
-        int num = 1;
+        int num = 5;
         item->setData(Qt::EditRole, num);
-//        setItem(0, 0, item);
-
-//        item = new  QTableWidgetItem();
-//        item->setWhatsThis("Apple");
-//        num = 2;
-//        item->setData(Qt::EditRole, num);
-//        this->setItem(0, 1, item);
-
-//        item = new  QTableWidgetItem();
-    //    QIcon ico;
-    //    QResource res;
-    //    res.registerResource()
-//        ico.addFile(":/res/water_icon.png");
-//        item->setIcon(ico);
-//        item->setWhatsThis("Water");
-//        setItem(1, 1, item);
-
+        ui->inventory_wgt->setItem(row, column, item);
 
     }
-}
 
-void GameField::on_inventory_wgt_currentItemChanged(QTableWidgetItem *current, QTableWidgetItem *previous)
-{
-    if (current && previous) {
-        if(current->whatsThis() == previous->whatsThis()) {
-            int cur_num = current->data(Qt::EditRole).toInt() + previous->data(Qt::EditRole).toInt();
-            current->setData(Qt::EditRole, cur_num);
-        }
-    }
 }
