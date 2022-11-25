@@ -15,10 +15,15 @@ class Inventory : public QTableWidget
 
 public:
     explicit Inventory(QWidget *parent = nullptr);
-//    ~Inventory();
-//    virtual void mousePressEvent(QMouseEvent *event) override;
-    virtual void dropEvent(QDropEvent *event) override;
 
+protected:
+    virtual void mousePressEvent(QMouseEvent *event) override;
+//    virtual void dropEvent(QDropEvent *event) override;
+    virtual bool dropMimeData (int row, int column, const QMimeData *, Qt::DropAction) override;
+
+private:
+//    QPoint drag_position_;
+//    QPoint drop_position_;
 private slots:
     void RemoveItem(int row, int column);
 
