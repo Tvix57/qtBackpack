@@ -43,10 +43,11 @@ void Item::mouseMoveEvent(QMouseEvent *event) {
     if (!(event->buttons() & Qt::LeftButton)) { return; }
     QDrag *drag = new QDrag(this);
     QMimeData *mimeData = new QMimeData;
-    mimeData->setData("Item", sendData().toByteArray());
+    QByteArray arr = sendData().toByteArray();
+    mimeData->setData("Item*", arr);
     drag->setPixmap(item_icon_.pixmap(50,50, QIcon::Normal, QIcon::On));
     drag->setMimeData(mimeData);
-    Qt::DropAction dropAction = drag->exec(Qt::CopyAction | Qt::MoveAction);
+    drag->exec(Qt::CopyAction);
 }
 
 QVariant Item::sendData() {

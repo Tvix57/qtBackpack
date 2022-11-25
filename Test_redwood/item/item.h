@@ -3,7 +3,7 @@
 
 #include <QWidget>
 #include <QResource>
-#include <QPicture>
+//#include <QPicture>
 
 //#include <QSound>
 #include <QIcon>
@@ -46,6 +46,6 @@ private:
 };
 
 
-Q_DECLARE_METATYPE(Item);
+Q_DECLARE_METATYPE(Item*);
 
 #endif // ITEM_H

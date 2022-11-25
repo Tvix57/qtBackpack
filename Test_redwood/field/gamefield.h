@@ -16,8 +16,6 @@ public:
     explicit GameField(QWidget *parent = nullptr);
     ~GameField();
 
-private slots:
-
 signals:
     void showMenu();
 
