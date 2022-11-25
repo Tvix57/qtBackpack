@@ -4,6 +4,7 @@
 Inventory::Inventory(QWidget *parent) :
     QTableWidget(parent)
 {
+    connect(this, SIGNAL(cellClicked(int, int)), this, SLOT(RemoveItem(int,int)));
 //    for (auto &it, items()) {
 //        setItem(0,0, nullptr);
 //    }
@@ -18,17 +19,38 @@ Inventory::Inventory(QWidget *parent) :
 
 void Inventory::dropEvent(QDropEvent *event) {
 //    event->mimeData()
-//    item(event->pos());
+    //    item(event->pos());
 }
 
-//void Inventory::on_table_wgt_currentItemChanged(QTableWidgetItem *current, QTableWidgetItem *previous) {
-//    if (current && previous) {
-//        if(current->whatsThis() == previous->whatsThis()) {
-//            int cur_num = current->data(Qt::EditRole).toInt() + previous->data(Qt::EditRole).toInt();
-//            current->setData(Qt::EditRole, cur_num);
-//        }
-//    }
-//}
+void Inventory::RemoveItem(int row, int column) {
+    auto item_in_inventory = item(row, column);
+    if (item_in_inventory) {
+        QVariant val = item_in_inventory->data(Qt::EditRole);
+        if (val.type() == 2) {
+            int num = val.toInt();
+            if (num > 1) {
+                item_in_inventory->setData(Qt::EditRole, num-1);
+            } else {
+                item_in_inventory->setData(Qt::EditRole, "");
+            }
+        } else {
+            setItem(row, column, nullptr);
+            delete item_in_inventory;
+        }
+    } else {
+        item_in_inventory = new  QTableWidgetItem();
+//        QIcon ico;
+        QResource res;
+    //    res.registerResource()
+//        ico.addFile(":/res/apple_icon.png");
+        item_in_inventory->setBackground(QBrush(QPixmap(":/res/apple_icon.png")));
+        item_in_inventory->setWhatsThis("Apple");
+        int num = 5;
+        item_in_inventory->setData(Qt::EditRole, num);
+        setItem(row, column, item_in_inventory);
+
+    }
+}
 
 //void Inventory::on_table_wgt_itemClicked(QTableWidgetItem *item) {
 //    if (item) {

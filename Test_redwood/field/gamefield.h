@@ -18,10 +18,6 @@ public:
 
 private slots:
 
-
-    void on_inventory_wgt_cellClicked(int row, int column);
-
-
 signals:
     void showMenu();
 

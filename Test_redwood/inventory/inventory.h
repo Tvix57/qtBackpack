@@ -20,12 +20,7 @@ public:
     virtual void dropEvent(QDropEvent *event) override;
 
 private slots:
-
-//    void on_table_wgt_currentItemChanged(QTableWidgetItem *current, QTableWidgetItem *previous);
-
-//    void on_table_wgt_itemClicked(QTableWidgetItem *item);
-
-//    void on_table_wgt_itemChanged(QTableWidgetItem *item);
+    void RemoveItem(int row, int column);
 
 };
 
