@@ -3,8 +3,7 @@
 
 #include <QWidget>
 #include <QResource>
-//#include <QPicture>
-
+#include <QSql>
 //#include <QSound>
 #include <QIcon>
 #include <QPainter>
@@ -22,7 +21,7 @@ class Item : public QWidget
 
 public:
     explicit Item(QWidget *parent = nullptr);
-//    Item(QWidget *parent = nullptr, QSound item_sound);
+    Item(int item_id, QWidget *parent = nullptr);
     ~Item();
     void PlaySound() const;
 //    void SetSound(QSound);
@@ -34,10 +33,11 @@ public:
 
 protected:
     void paintEvent(QPaintEvent *event) override;
+    void mouseReleaseEvent(QMouseEvent* event) override;
     void mouseMoveEvent(QMouseEvent *event) override;
 
 private:
-    QVariant sendData();
+    int id_;
     QString item_type_;
     QResource image_dir_;
     QResource sound_dir_;

@@ -1,4 +1,4 @@
-QT       += core gui multimedia
+QT       += core gui multimedia sql
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -28,7 +28,6 @@ HEADERS += \
 
 FORMS += \
     field/gamefield.ui \
-    item/item.ui \
     mainwindow.ui
 
 TRANSLATIONS += \

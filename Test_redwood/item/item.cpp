@@ -2,13 +2,19 @@
 
 Item::Item(QWidget *parent) :
     QWidget(parent),
+    id_{0},
     item_type_{"Apple"},
     image_dir_(":/res/apple_icon.png"),
     sound_dir_(":/res/apple_eat.mp3"),
     item_icon_(image_dir_.fileName())
 //  ,item_sound_(sound_dir_.fileName())
-
 {}
+
+Item::Item(int item_id, QWidget *parent) :
+    QWidget(parent),
+    id_{item_id} {
+        // sql query by id
+}
 
 Item::~Item() {
 }
@@ -39,19 +45,20 @@ void Item::paintEvent(QPaintEvent *event) {
     painter.drawPixmap(obl, item_icon_.pixmap(50,50));
 }
 
+void Item::mouseReleaseEvent(QMouseEvent *event) {
+    if (event->button() == Qt::RightButton) {
+        PlaySound();
+    }
+    event->accept();
+}
+
 void Item::mouseMoveEvent(QMouseEvent *event) {
     if (!(event->buttons() & Qt::LeftButton)) { return; }
     QDrag *drag = new QDrag(this);
     QMimeData *mimeData = new QMimeData;
-    QByteArray arr = sendData().toByteArray();
-    mimeData->setData("Item*", arr);
-    drag->setPixmap(item_icon_.pixmap(50,50, QIcon::Normal, QIcon::On));
+    mimeData->setData("ItemId", QVariant(id_).toByteArray());
+    mimeData->setData("ItemCount", QVariant(5).toByteArray());
+    drag->setPixmap(GetIcon().pixmap(50,50, QIcon::Normal, QIcon::On));
     drag->setMimeData(mimeData);
     drag->exec(Qt::CopyAction);
-}
-
-QVariant Item::sendData() {
-    QVariant data;
-    data.setValue(this);
-    return data;
 }
