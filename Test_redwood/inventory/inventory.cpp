@@ -16,21 +16,23 @@ void Inventory::mousePressEvent(QMouseEvent *event) {
         int id = item_in_inventory->data(Qt::UserRole).toInt();
         int count = item_in_inventory->data(Qt::DisplayRole).toInt();
 
-
         if (event->button() == Qt::LeftButton) {
             QDrag *drag = new QDrag(this);
             QMimeData *mimeData = new QMimeData;
+
             mimeData->setData("ItemId", QVariant(id).toByteArray());
             mimeData->setData("ItemCount", QVariant(count).toByteArray());
+            mimeData->setData("StartPointX" , QVariant(info.x()).toByteArray());
+            mimeData->setData("StartPointY" , QVariant(info.y()).toByteArray());
 
             drag->setMimeData(mimeData);
-
             drag->setPixmap(item_in_inventory->background().texture());
 
             drag->exec(Qt::MoveAction);
 
         } else
         if (event->button() == Qt::RightButton) {
+            Item().PlaySound();
             if (count > 1) {
 //                Item(id).PlaySound();
                 --count;
@@ -43,7 +45,7 @@ void Inventory::mousePressEvent(QMouseEvent *event) {
     event->accept();
 }
 
-void Inventory::dragEnterEvent(QDragEnterEvent *event) {
+void Inventory::dragEnterEvent(QDragEnterEvent *event) {    
     event->acceptProposedAction();
 }
 
@@ -52,22 +54,32 @@ void Inventory::dragMoveEvent(QDragMoveEvent *event) {
 }
 
 void Inventory::dropEvent(QDropEvent *event) {
-    QPoint point = GetItemPosition(event->pos());
-//    if (point.isNull()) { //// необходимо проверить чтобы не в той же точке
-        auto item_in_inventory = item(point.x(), point.y());
-        if (event->dropAction() == Qt::MoveAction) {
-            qDebug() << event->pos();
+    if (event->mimeData()->hasFormat("ItemId")) {
+        QPoint point = GetItemPosition(event->pos());
+        if (event->dropAction() == Qt:: MoveAction) {
+            if (event->mimeData()->hasFormat("StartPointX") &&
+                event->mimeData()->hasFormat("StartPointY")) {
+                QPoint start_point (QVariant(event->mimeData()->data("StartPointX")).toInt(),
+                                    QVariant(event->mimeData()->data("StartPointY")).toInt());
+                if (start_point != point) {
+                    AddItem(point, event->mimeData());
+                    RemoveItem(start_point);
+                    event->accept();
+                }
+            }
+        } else {
+            AddItem(point, event->mimeData());
+            event->accept();
         }
-        AddItem(point, item_in_inventory, event->mimeData());
-        event->accept();
-//    }
+    }
 }
 
 void Inventory::dragLeaveEvent(QDragLeaveEvent *event) {
     event->accept();
 }
 
-void Inventory::AddItem(QPoint point, QTableWidgetItem *item_in_inventory, const QMimeData *data_input) {
+void Inventory::AddItem(QPoint point, const QMimeData *data_input) {
+    QTableWidgetItem *item_in_inventory = item(point.x(), point.y());
     if (item_in_inventory == nullptr) {
         int num = QVariant(data_input->data("ItemCount")).toInt();
         int id = QVariant(data_input->data("ItemId")).toInt();

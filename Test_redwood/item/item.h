@@ -4,12 +4,12 @@
 #include <QWidget>
 #include <QResource>
 #include <QSql>
-//#include <QSound>
 #include <QIcon>
 #include <QPainter>
 #include <QMouseEvent>
 #include <QDrag>
 #include <QMimeData>
+#include <QSoundEffect>
 
 namespace Ui {
 class Item;
@@ -23,8 +23,7 @@ public:
     explicit Item(QWidget *parent = nullptr);
     Item(int item_id, QWidget *parent = nullptr);
     ~Item();
-    void PlaySound() const;
-//    void SetSound(QSound);
+    void PlaySound();
     const QIcon &GetIcon() const;
     void SetIcon(QIcon);
     const QString &GetItemType() const;
@@ -42,7 +41,7 @@ private:
     QResource image_dir_;
     QResource sound_dir_;
     QIcon item_icon_;
-//    QSound item_sound_;
+    QSoundEffect *item_sound_;
 };
 
 

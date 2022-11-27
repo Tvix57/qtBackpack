@@ -4,6 +4,7 @@
 #include <QWidget>
 #include <QTableWidget>
 #include <QMouseEvent>
+#include <QBuffer>
 
 namespace Ui {
 class Inventory;
@@ -24,7 +25,7 @@ protected:
     virtual void mousePressEvent(QMouseEvent *event) override;
 
 private:
-    void AddItem(QPoint, QTableWidgetItem*, const QMimeData *);
+    void AddItem(QPoint, const QMimeData *);
     void RemoveItem(QPoint&);
     QPoint GetItemPosition(QPoint);
 
