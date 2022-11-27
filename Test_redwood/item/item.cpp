@@ -52,6 +52,7 @@ void Item::paintEvent(QPaintEvent *event) {
     QPainter painter(this);
     QRect obl(0, 0, width(), height());
     painter.drawPixmap(obl, item_icon_.pixmap(50,50));
+    event->accept();
 }
 
 void Item::mouseReleaseEvent(QMouseEvent *event) {
