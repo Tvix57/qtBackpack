@@ -12,10 +12,15 @@ item_sound_ = new QSoundEffect(this);
 item_sound_->setSource(QUrl::fromLocalFile(sound_dir_.absoluteFilePath()));
 }
 
-Item::Item(int item_id, QWidget *parent) :
-    QWidget(parent),
-    id_{item_id} {
-        // sql query by id
+Item::Item(int item_id, QWidget *parent) : Item(parent) {
+    if (false) { // sql query by id was succsess
+        id_ = item_id;
+        item_type_ = "Water";
+        image_dir_.setFileName(":/res/water_icon.png");
+        sound_dir_.setFileName(":/res/water_drink.wav");
+        item_icon_.addFile(image_dir_.fileName());
+        item_sound_->setSource(QUrl::fromLocalFile(sound_dir_.absoluteFilePath()));
+    }
 }
 
 Item::~Item() {

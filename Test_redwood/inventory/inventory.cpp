@@ -29,12 +29,10 @@ void Inventory::mousePressEvent(QMouseEvent *event) {
             drag->setPixmap(item_in_inventory->background().texture());
 
             drag->exec(Qt::MoveAction);
-
-        } else
-        if (event->button() == Qt::RightButton) {
-            Item().PlaySound();
+        } else if (event->button() == Qt::RightButton) {
+            Item *tmp = new Item(id, this);
+            tmp->PlaySound();
             if (count > 1) {
-//                Item(id).PlaySound();
                 --count;
                 item_in_inventory->setData(Qt::DisplayRole, count);
             } else {

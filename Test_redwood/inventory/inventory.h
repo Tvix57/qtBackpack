@@ -4,7 +4,6 @@
 #include <QWidget>
 #include <QTableWidget>
 #include <QMouseEvent>
-#include <QBuffer>
 
 namespace Ui {
 class Inventory;
