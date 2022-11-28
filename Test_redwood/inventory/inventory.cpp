@@ -81,7 +81,7 @@ void Inventory::AddItem(QPoint point, const QMimeData *data_input) {
     if (item_in_inventory == nullptr) {
         int num = QVariant(data_input->data("ItemCount")).toInt();
         int id = QVariant(data_input->data("ItemId")).toInt();
-        Item * item = new Item(this);
+        Item * item = new Item(id, this);
         item_in_inventory = new  QTableWidgetItem();
         item_in_inventory->setFlags(Qt::ItemIsDragEnabled |
                                     Qt::ItemIsDropEnabled |

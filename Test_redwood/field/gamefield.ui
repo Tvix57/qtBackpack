@@ -6,9 +6,15 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>202</width>
-    <height>176</height>
+    <width>221</width>
+    <height>175</height>
    </rect>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
   </property>
   <property name="windowTitle">
    <string>Form</string>
@@ -29,7 +35,34 @@
    <property name="spacing">
     <number>0</number>
    </property>
-   <item row="1" column="1">
+   <item row="0" column="0" colspan="2">
+    <widget class="QPushButton" name="main_btn">
+     <property name="text">
+      <string>Главное меню</string>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="0">
+    <widget class="QComboBox" name="comboBox">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <item>
+      <property name="text">
+       <string>Apple</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Water</string>
+      </property>
+     </item>
+    </widget>
+   </item>
+   <item row="1" column="1" rowspan="2">
     <widget class="Inventory" name="inventory_wgt">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -123,44 +156,6 @@
      <column/>
     </widget>
    </item>
-   <item row="0" column="0" colspan="2">
-    <widget class="QPushButton" name="main_btn">
-     <property name="text">
-      <string>Главное меню</string>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="0">
-    <widget class="Item" name="item_wgt" native="true">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="minimumSize">
-      <size>
-       <width>50</width>
-       <height>50</height>
-      </size>
-     </property>
-     <property name="maximumSize">
-      <size>
-       <width>50</width>
-       <height>50</height>
-      </size>
-     </property>
-     <property name="mouseTracking">
-      <bool>true</bool>
-     </property>
-     <property name="tabletTracking">
-      <bool>true</bool>
-     </property>
-     <property name="acceptDrops">
-      <bool>true</bool>
-     </property>
-    </widget>
-   </item>
   </layout>
  </widget>
  <customwidgets>
@@ -168,12 +163,6 @@
    <class>Inventory</class>
    <extends>QTableWidget</extends>
    <header>inventory.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>Item</class>
-   <extends>QWidget</extends>
-   <header>item.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

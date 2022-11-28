@@ -3,17 +3,14 @@
 
 #include <QWidget>
 #include <QResource>
-#include <QSql>
+#include <QtSql>
+#include <QTableView>
 #include <QIcon>
 #include <QPainter>
 #include <QMouseEvent>
 #include <QDrag>
 #include <QMimeData>
 #include <QSoundEffect>
-
-namespace Ui {
-class Item;
-}
 
 class Item : public QWidget
 {
@@ -29,13 +26,13 @@ public:
     const QString &GetItemType() const;
     void SetItemType(QString);
 
-
 protected:
     void paintEvent(QPaintEvent *event) override;
     void mouseReleaseEvent(QMouseEvent* event) override;
     void mouseMoveEvent(QMouseEvent *event) override;
 
 private:
+    bool OpenDb();
     int id_;
     QString item_type_;
     QResource image_dir_;
