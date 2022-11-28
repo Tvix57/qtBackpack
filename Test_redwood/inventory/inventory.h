@@ -25,8 +25,13 @@ protected:
 
 private:
     void AddItem(QPoint, const QMimeData *);
+
+
+    void MoveItem(QPoint, QPoint);
+
     void RemoveItem(QPoint&);
     QPoint GetItemPosition(QPoint);
+    void ReplaceItems(QPoint&, QPoint&);
 
 };
 

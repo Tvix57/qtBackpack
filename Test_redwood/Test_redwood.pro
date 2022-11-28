@@ -30,6 +30,10 @@ FORMS += \
     field/gamefield.ui \
     mainwindow.ui
 
+addFiles.sources = items_database.sqlite
+addFiles.path = .
+DEPLOYMENT += addFiles
+
 TRANSLATIONS += \
     Test_redwood_ru_RU.ts
 CONFIG += lrelease

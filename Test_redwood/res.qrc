@@ -4,6 +4,6 @@
         <file>res/water_icon.png</file>
         <file>res/apple_eat.wav</file>
         <file>res/water_drink.wav</file>
-        <file>item/items_database.sqlite</file>
+        <file>db/items_database.sqlite</file>
     </qresource>
 </RCC>
