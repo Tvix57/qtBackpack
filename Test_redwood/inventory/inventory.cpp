@@ -171,7 +171,6 @@ void Inventory::WriteDB() {
                 list << cur_item->data(Qt::UserRole).toString();
                 list << cur_item->data(Qt::DisplayRole).toString();
                 db_source_->SetInventoryData(list);
-                qDebug() << list;
             }
         }
     }

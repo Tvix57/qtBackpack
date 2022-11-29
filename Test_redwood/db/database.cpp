@@ -3,9 +3,8 @@
 DataBase::DataBase(QObject *parent) :
                     QObject(parent),
                     db_{QSqlDatabase::addDatabase("QSQLITE")},
-                    file_path_ {QDir::currentPath()+QString("/items_database.sqlite")} {
+                    file_path_ {QCoreApplication::applicationDirPath ()+QString("/items_database.sqlite")} {
 
-    file_path_ = "/Users/ajhin/github/test_redwood/Test_redwood/db/items_database.sqlite";
     QFileInfo checkFile(file_path_);
     if (checkFile.isFile()) {
         db_.setDatabaseName(file_path_);
@@ -60,18 +59,21 @@ QMap<int, QHash<QString, QVariant>> DataBase::GetInventoryData() {
 
 void DataBase::SetInventoryData(QList<QString> new_row) {
     QSqlQuery query(db_);
-    QString query_row("INSERT INTO inventory (item_position, item_id, item_count)"
-                      "VALUES (?, ?, ?);");
+//    QString query_row("INSERT INTO inventory (item_position, item_id, item_count, item_type)"
+//                      "VALUES (%1, %2, %3, (SELECT item_type FROM items WHERE id = %2 ));");
 
-    query.prepare(query_row);
-    for (int i = 0; i < 3; i++) {
-        query.bindValue(i, new_row.at(i));
-    }
+
+
+    query.prepare(QString("INSERT INTO inventory (item_position, item_id, item_count, item_type)"
+                          "VALUES (%1, %2, %3, (SELECT item_type FROM items WHERE id = %2 ));")
+                          .arg(new_row.at(0)).arg(new_row.at(1)).arg(new_row.at(2)));
+    qDebug() << query.lastQuery();
+//    query.bindValue(3, new_row.at(0));
     query.exec();
 }
 
 void DataBase::ClearInventoryDB() {
     QSqlQuery query(db_);
-    query.exec("TRUNCATE TABLE inventory");
+    query.exec("DELETE FROM inventory");
 }
 

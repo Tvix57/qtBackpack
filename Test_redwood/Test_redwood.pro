@@ -29,18 +29,13 @@ HEADERS += \
     item/item.h \
     mainwindow.h
 
+addFiles.sources = items_database.sqlite
+addFiles.path = ./db
+DEPLOYMENT += addFiles
+
 FORMS += \
     field/gamefield.ui \
     mainwindow.ui
-
-
-win32 {
-    addFiles.sources = items_database.sqlite
-    addFiles.path = ./db
-    DEPLOYMENT += addFiles
-} else {
-
-}
 
 TRANSLATIONS += \
     Test_redwood_ru_RU.ts
@@ -54,3 +49,4 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 
 RESOURCES += \
     res.qrc
+
