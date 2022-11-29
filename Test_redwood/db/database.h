@@ -12,7 +12,8 @@ public:
     ~DataBase();
     QHash<QString, QVariant> GetItemData(int);
     QMap<int, QHash<QString, QVariant>> GetInventoryData();
-    void SetInventoryData();
+    void SetInventoryData(QList<QString>);
+    void ClearInventoryDB();
 
 
 private:

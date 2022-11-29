@@ -9,12 +9,14 @@ GameField::GameField(QWidget *parent) :
 
     Item * item = new Item(this);
     item->SetDataBaseSource(db_source_);
-    Inventory * inventory = new Inventory(db_source_, this);
+    inventory_ = new Inventory(db_source_, this);
+
     ui->gridLayout->addWidget(item, 2,0);
-    ui->gridLayout->addWidget(inventory, 1, 1, 2, 1);
+    ui->gridLayout->addWidget(inventory_, 1, 1, 2, 1);
 }
 
 GameField::~GameField() { delete ui;
+                          delete inventory_;
                           delete db_source_;}
 
 void GameField::on_comboBox_currentIndexChanged(int index) {

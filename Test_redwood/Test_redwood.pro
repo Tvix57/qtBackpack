@@ -33,9 +33,14 @@ FORMS += \
     field/gamefield.ui \
     mainwindow.ui
 
-addFiles.sources = items_database.sqlite
-addFiles.path = ./db
-DEPLOYMENT += addFiles
+
+win32 {
+    addFiles.sources = items_database.sqlite
+    addFiles.path = ./db
+    DEPLOYMENT += addFiles
+} else {
+
+}
 
 TRANSLATIONS += \
     Test_redwood_ru_RU.ts

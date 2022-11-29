@@ -30,6 +30,7 @@ private slots:
 private:
     Ui::GameField *ui;
     DataBase * db_source_;
+    Inventory * inventory_;
 };
 
 #endif // GAMEFIELD_H

@@ -6,6 +6,7 @@
 #include <QMouseEvent>
 #include <QHeaderView>
 #include <QScrollBar>
+
 #include "database.h"
 
 #define ROW_HEIGHT 50

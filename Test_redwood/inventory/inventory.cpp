@@ -161,15 +161,31 @@ QPoint Inventory::GetItemPosition(QPoint input_point) {
 }
 
 void Inventory::WriteDB() {
-    db_source_->SetInventoryData();
+    db_source_->ClearInventoryDB();
+    for(int i = 0; i < rows_; ++i) {
+        for(int j = 0; j < columns_; ++j) {
+            QTableWidgetItem * cur_item = itemAt(i,j);
+            if (cur_item) {
+                QList<QString> list;
+                list << QString::number(i * rows_ + j);
+                list << cur_item->data(Qt::UserRole).toString();
+                list << cur_item->data(Qt::DisplayRole).toString();
+                db_source_->SetInventoryData(list);
+                qDebug() << list;
+            }
+        }
+    }
 }
 
 void Inventory::ReadDB() {
-    for (auto &it : db_source_->GetInventoryData()) {
+    auto db_data = db_source_->GetInventoryData();
+    for (auto &item : db_data) {
         QMimeData tmp_data;
         QPoint position;
-        position.setX(it.value("item_position").toInt() / rows_);
-        position.setY(it.value("item_position").toInt() % rows_);
+        position.setX(db_data.key(item) / rows_);
+        position.setY(db_data.key(item) % rows_);
+        tmp_data.setData("ItemId", item.value("item_id").toByteArray());
+        tmp_data.setData("ItemCount", item.value("item_count").toByteArray());
         AddItem(position, &tmp_data);
     }
 }

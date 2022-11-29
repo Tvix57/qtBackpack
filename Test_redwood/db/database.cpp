@@ -4,11 +4,15 @@ DataBase::DataBase(QObject *parent) :
                     QObject(parent),
                     db_{QSqlDatabase::addDatabase("QSQLITE")},
                     file_path_ {QDir::currentPath()+QString("/items_database.sqlite")} {
+
+    file_path_ = "/Users/ajhin/github/test_redwood/Test_redwood/db/items_database.sqlite";
     QFileInfo checkFile(file_path_);
-    if (checkFile.isFile() && db_.isOpen()) {
+    if (checkFile.isFile()) {
         db_.setDatabaseName(file_path_);
-        if (!db_.open()) {
-                qDebug() << "База данных не открылась" << db_.lastError();
+        if (!db_.isOpen()) {
+            if (!db_.open()) {
+                    qDebug() << "База данных не открылась" << db_.lastError();
+            }
         }
     }
 }
@@ -39,7 +43,7 @@ QMap<int, QHash<QString, QVariant>> DataBase::GetInventoryData() {
     query.prepare("SELECT * FROM inventory");
     if (query.exec()) {
         if (query.first()) {
-            while(query.next()) {
+            do {
                 QSqlRecord record_gr = query.record();
                 int position = query.value(record_gr.indexOf("item_position")).toInt();
                 QHash <QString, QVariant> tmp;
@@ -48,13 +52,26 @@ QMap<int, QHash<QString, QVariant>> DataBase::GetInventoryData() {
                 tmp.insert("item_count", query.value(record_gr.indexOf("item_count")));
 
                 result.insert(position, tmp);
-            }
+            } while (query.next());
         }
     }
     return result;
 }
 
-void DataBase::SetInventoryData() {
+void DataBase::SetInventoryData(QList<QString> new_row) {
+    QSqlQuery query(db_);
+    QString query_row("INSERT INTO inventory (item_position, item_id, item_count)"
+                      "VALUES (?, ?, ?);");
 
+    query.prepare(query_row);
+    for (int i = 0; i < 3; i++) {
+        query.bindValue(i, new_row.at(i));
+    }
+    query.exec();
+}
+
+void DataBase::ClearInventoryDB() {
+    QSqlQuery query(db_);
+    query.exec("TRUNCATE TABLE inventory");
 }
 

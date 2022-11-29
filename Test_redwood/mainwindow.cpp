@@ -11,6 +11,7 @@ MainWindow::MainWindow(QWidget *parent)
 
 MainWindow::~MainWindow() {
     delete ui;
+    delete game_field_;
 }
 
 void MainWindow::on_exit_btn_clicked() {
