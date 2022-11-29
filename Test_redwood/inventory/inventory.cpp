@@ -1,12 +1,18 @@
 #include "inventory.h"
 #include "item.h"
 
-Inventory::Inventory(QWidget *parent) :
-    QTableWidget(parent)
+Inventory::Inventory(DataBase* db_source, QWidget *parent) :
+    QTableWidget(parent),
+    rows_{3},
+    columns_{3},
+    db_source_{db_source}
 {
-    setDragEnabled(true);
-    setAcceptDrops(true);
-    setDragDropMode(QAbstractItemView::DragDrop);
+    SetInventorySettings();
+    ReadDB();
+}
+
+Inventory::~Inventory() {
+    WriteDB();
 }
 
 void Inventory::mousePressEvent(QMouseEvent *event) {
@@ -30,7 +36,8 @@ void Inventory::mousePressEvent(QMouseEvent *event) {
 
             drag->exec(Qt::MoveAction);
         } else if (event->button() == Qt::RightButton) {
-            Item *tmp = new Item(id, this);
+            Item *tmp = new Item(this);
+            tmp->SetItem(id);
             tmp->PlaySound();
             if (count > 1) {
                 --count;
@@ -43,6 +50,28 @@ void Inventory::mousePressEvent(QMouseEvent *event) {
     event->accept();
 }
 
+const int &Inventory::GetRows() const {
+    return rows_;
+}
+
+const int &Inventory::GetColumns() const {
+    return columns_;
+}
+
+void Inventory::SetRows(int new_rows) {
+    rows_ = new_rows;
+    setRowCount(rows_);
+}
+
+void Inventory::SetColumns(int new_columns) {
+    columns_ = new_columns;
+    setColumnCount(columns_);
+}
+
+void Inventory::SetDataBaseSource(DataBase * db_source) {
+    db_source_ = db_source;
+}
+
 void Inventory::dragEnterEvent(QDragEnterEvent *event) {    
     event->acceptProposedAction();
 }
@@ -53,7 +82,7 @@ void Inventory::dragMoveEvent(QDragMoveEvent *event) {
 
 void Inventory::dropEvent(QDropEvent *event) {
     if (event->mimeData()->hasFormat("ItemId")) {
-        QPoint drop_point = GetItemPosition(event->position().toPoint());
+        QPoint drop_point = GetItemPosition(event->pos());
         if (event->dropAction() == Qt:: MoveAction) {
             if (event->mimeData()->hasFormat("StartPointX") &&
                 event->mimeData()->hasFormat("StartPointY")) {
@@ -80,7 +109,8 @@ void Inventory::AddItem(QPoint drop_point, const QMimeData *data_input) {
     int id = QVariant(data_input->data("ItemId")).toInt();
     int num = QVariant(data_input->data("ItemCount")).toInt();
     if (!item_in_inventory) {
-        Item * item = new Item(id, this);
+        Item * item = new Item(this);
+        item->SetItem(id);
         item_in_inventory = new  QTableWidgetItem();
         item_in_inventory->setFlags(Qt::ItemIsDragEnabled |
                                     Qt::ItemIsDropEnabled |
@@ -128,6 +158,45 @@ QPoint Inventory::GetItemPosition(QPoint input_point) {
     out_point.setX(input_point.y() / rowHeight(0));
     out_point.setY(input_point.x() / columnWidth(0));
     return out_point;
+}
+
+void Inventory::WriteDB() {
+    db_source_->SetInventoryData();
+}
+
+void Inventory::ReadDB() {
+    for (auto &it : db_source_->GetInventoryData()) {
+        QMimeData tmp_data;
+        QPoint position;
+        position.setX(it.value("item_position").toInt() / rows_);
+        position.setY(it.value("item_position").toInt() % rows_);
+        AddItem(position, &tmp_data);
+    }
+}
+
+void Inventory::SetInventorySettings() {
+    verticalHeader()->setMinimumSectionSize(ROW_HEIGHT);
+    verticalHeader()->setMaximumSectionSize(ROW_HEIGHT);
+    verticalHeader()->setVisible(false);
+    verticalScrollBar()->setDisabled(true);
+    setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    verticalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+
+    horizontalHeader()->setMinimumSectionSize(COLUMN_WIDHT);
+    horizontalHeader()->setMaximumSectionSize(COLUMN_WIDHT);
+    horizontalHeader()->setVisible(false);
+    horizontalScrollBar()->setDisabled(true);
+    setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+
+    resizeRowsToContents();
+    resizeColumnsToContents();
+
+    setDragEnabled(true);
+    setAcceptDrops(true);
+    setDragDropMode(QAbstractItemView::DragDrop);
+    setRowCount(rows_);
+    setColumnCount(columns_);
 }
 
 void Inventory::ReplaceItems(QPoint & curent_point, QPoint & old_point) {

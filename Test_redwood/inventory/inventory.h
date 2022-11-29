@@ -4,17 +4,25 @@
 #include <QWidget>
 #include <QTableWidget>
 #include <QMouseEvent>
+#include <QHeaderView>
+#include <QScrollBar>
+#include "database.h"
 
-namespace Ui {
-class Inventory;
-}
+#define ROW_HEIGHT 50
+#define COLUMN_WIDHT 50
 
 class Inventory : public QTableWidget
 {
     Q_OBJECT
 
 public:
-    explicit Inventory(QWidget *parent = nullptr);
+    explicit Inventory(DataBase * db_source = nullptr, QWidget *parent = nullptr);
+    ~Inventory();
+    const int &GetRows() const;
+    const int &GetColumns() const;
+    void SetRows(int);
+    void SetColumns(int);
+    void SetDataBaseSource(DataBase *);
 
 protected:
     virtual void dragEnterEvent(QDragEnterEvent * event) override;
@@ -25,13 +33,15 @@ protected:
 
 private:
     void AddItem(QPoint, const QMimeData *);
-
-
     void MoveItem(QPoint, QPoint);
-
     void RemoveItem(QPoint&);
     QPoint GetItemPosition(QPoint);
+    void WriteDB();
+    void ReadDB();
+    void SetInventorySettings();
     void ReplaceItems(QPoint&, QPoint&);
+    int rows_, columns_;
+    DataBase * db_source_;
 
 };
 

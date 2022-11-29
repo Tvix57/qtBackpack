@@ -4,6 +4,9 @@
 #include <QWidget>
 #include <QTableWidgetItem>
 
+#include "inventory.h"
+#include "item.h"
+
 namespace Ui {
 class GameField;
 }
@@ -22,8 +25,11 @@ signals:
 private slots:
     void on_comboBox_currentIndexChanged(int index);
 
+    void on_main_btn_clicked();
+
 private:
     Ui::GameField *ui;
+    DataBase * db_source_;
 };
 
 #endif // GAMEFIELD_H

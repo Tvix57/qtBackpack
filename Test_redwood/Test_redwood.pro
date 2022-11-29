@@ -11,9 +11,11 @@ CONFIG += c++17
 INCLUDEPATH += \
      field \
      item \
-     inventory
+     inventory \
+     db
 
 SOURCES += \
+    db/database.cpp \
     field/gamefield.cpp \
     inventory/inventory.cpp \
     item/item.cpp \
@@ -21,6 +23,7 @@ SOURCES += \
     mainwindow.cpp
 
 HEADERS += \
+    db/database.h \
     field/gamefield.h \
     inventory/inventory.h \
     item/item.h \
@@ -31,7 +34,7 @@ FORMS += \
     mainwindow.ui
 
 addFiles.sources = items_database.sqlite
-addFiles.path = .
+addFiles.path = ./db
 DEPLOYMENT += addFiles
 
 TRANSLATIONS += \

@@ -7,40 +7,35 @@ Item::Item(QWidget *parent) :
     image_dir_(":/res/apple_icon.png"),
     sound_dir_(":/res/apple_eat.wav"),
     item_icon_(image_dir_.fileName()),
-    item_sound_{nullptr}
+    item_sound_{nullptr},
+    db_source_{nullptr}
 {
     setFixedSize(50,50);
     item_sound_ = new QSoundEffect(this);
     item_sound_->setSource(QUrl::fromLocalFile(sound_dir_.absoluteFilePath()));
 }
 
-Item::Item(int item_id, QWidget *parent) : Item(parent) {
-    QSqlDatabase item_db = QSqlDatabase::addDatabase("QSQLITE");
-//    item_db.setDatabaseName("/Users/ajhin/github/test_redwood/Test_redwood/db/items_database.sqlite");
-    item_db.setDatabaseName("items_database.sqlite");
+Item::~Item() {
+    delete item_sound_;
+    item_sound_ = nullptr;
+    db_source_ = nullptr;
+}
 
-    if (!item_db.isOpen()) {
-        if (!item_db.open()) {
-                qDebug() << "База данных не открылась" << item_db.lastError();
-        }
-        QSqlQuery query(item_db);
-        query.prepare("SELECT * FROM items WHERE id = ' " + QString::number(item_id)+ " ' ");
-        if (query.exec()) {
-            if (query.first()) {
-                QSqlRecord record_gr = query.record();
-                id_ = item_id;
-                item_type_ = query.value(record_gr.indexOf("item_type")).toString();
-                image_dir_.setFileName(query.value(record_gr.indexOf("icon_way")).toString());
-                sound_dir_.setFileName(query.value(record_gr.indexOf("sound_way")).toString());
-                item_icon_.addFile(image_dir_.fileName());
-                item_sound_->setSource(QUrl::fromLocalFile(sound_dir_.absoluteFilePath()));
-            }
+void Item::SetItem(int item_id) {
+    if (db_source_) {
+        auto data = db_source_->GetItemData(item_id);
+        if (!data.isEmpty()) {
+            id_ = item_id;
+            item_type_ = data.value("item_type").toString();
+            image_dir_.setFileName(data.value("icon_way").toString());
+            sound_dir_.setFileName(data.value("sound_way").toString());
+            item_icon_.addFile(image_dir_.fileName());
+            item_sound_->setSource(QUrl::fromLocalFile(sound_dir_.absoluteFilePath()));
         }
     }
 }
 
-Item::~Item() {
-}
+
 
 void Item::PlaySound() {
     if (item_sound_->status() == QSoundEffect::Ready) {
@@ -62,6 +57,10 @@ const QString &Item::GetItemType() const {
 
 void Item::SetItemType(QString new_type) {
     item_type_ = new_type;
+}
+
+void Item::SetDataBaseSource(DataBase * db_source) {
+    db_source_ = db_source;
 }
 
 void Item::paintEvent(QPaintEvent *event) {

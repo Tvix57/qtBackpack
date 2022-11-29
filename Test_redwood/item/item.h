@@ -3,14 +3,14 @@
 
 #include <QWidget>
 #include <QResource>
-#include <QtSql>
 #include <QTableView>
-#include <QIcon>
 #include <QPainter>
 #include <QMouseEvent>
 #include <QDrag>
 #include <QMimeData>
 #include <QSoundEffect>
+
+#include "database.h"
 
 class Item : public QWidget
 {
@@ -18,13 +18,14 @@ class Item : public QWidget
 
 public:
     explicit Item(QWidget *parent = nullptr);
-    Item(int item_id, QWidget *parent = nullptr);
     ~Item();
+    void SetItem(int item_id);
     void PlaySound();
     const QIcon &GetIcon() const;
     void SetIcon(QIcon);
     const QString &GetItemType() const;
     void SetItemType(QString);
+    void SetDataBaseSource(DataBase *);
 
 protected:
     void paintEvent(QPaintEvent *event) override;
@@ -32,13 +33,13 @@ protected:
     void mouseMoveEvent(QMouseEvent *event) override;
 
 private:
-    bool OpenDb();
     int id_;
     QString item_type_;
     QResource image_dir_;
     QResource sound_dir_;
     QIcon item_icon_;
     QSoundEffect *item_sound_;
+    DataBase *db_source_;
 };
 
 
