@@ -15,18 +15,22 @@ MainWindow::~MainWindow() {
 }
 
 void MainWindow::on_exit_btn_clicked() {
-    game_field_->close();
-    delete game_field_;
+    if (game_field_) {
+        game_field_->close();
+    }
     this->close();
 }
 
-
 void MainWindow::on_new_game_btn_clicked() {
     if (game_field_) {
-        game_field_->close();
-        delete game_field_;
-        game_field_ = nullptr;
+         connect(game_field_, SIGNAL(destroyed()), this, SLOT(CreateNewGameField()));
+         delete game_field_;
+    } else {
+        CreateNewGameField();
     }
+}
+
+void MainWindow::CreateNewGameField() {
     game_field_ = new GameField();
     connect(game_field_, SIGNAL(showMenu()), this, SLOT(show()));
     this->hide();

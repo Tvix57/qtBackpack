@@ -13,6 +13,7 @@ GameField::GameField(QWidget *parent) :
 
     ui->gridLayout->addWidget(item, 2,0);
     ui->gridLayout->addWidget(inventory_, 1, 1, 2, 1);
+
 }
 
 GameField::~GameField() { delete ui;
@@ -28,6 +29,6 @@ void GameField::on_comboBox_currentIndexChanged(int index) {
 }
 
 void GameField::on_main_btn_clicked() {
-//    ui->gridLayout->setEnabled(false);
+    setEnabled(false);
     emit showMenu();
 }

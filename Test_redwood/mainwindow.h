@@ -21,6 +21,7 @@ private slots:
     void on_exit_btn_clicked();
 
     void on_new_game_btn_clicked();
+    void CreateNewGameField();
 
 private:
     Ui::MainWindow *ui;

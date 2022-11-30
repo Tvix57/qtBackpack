@@ -29,10 +29,6 @@ HEADERS += \
     item/item.h \
     mainwindow.h
 
-addFiles.sources = items_database.sqlite
-addFiles.path = ./db
-DEPLOYMENT += addFiles
-
 FORMS += \
     field/gamefield.ui \
     mainwindow.ui
@@ -41,6 +37,7 @@ TRANSLATIONS += \
     Test_redwood_ru_RU.ts
 CONFIG += lrelease
 CONFIG += embed_translations
+CONFIG += file_copies
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
@@ -50,3 +47,29 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 RESOURCES += \
     res.qrc
 
+database.path = $${PWD}/db
+database.files = $${PWD}/db/items_database.sqlite
+INSTALLS += database
+
+CONFIG(debug, debug|release) {
+    VARIANT = debug
+} else {
+    VARIANT = release
+}
+
+# копирует заданные файлы в каталог назначения
+defineTest(copyToDestDir) {
+    files = $$1
+    dir = $$2
+    # заменить слеши в пути назначения для Windows
+    win32:dir ~= s,/,\\,g
+
+    for(file, files) {
+        # заменить слеши в исходном пути для Windows
+        win32:file ~= s,/,\\,g
+        QMAKE_POST_LINK += $$QMAKE_COPY_DIR $$shell_quote($$file) $$shell_quote($$dir) $$escape_expand(\\n\\t)
+    }
+    export(QMAKE_POST_LINK)
+}
+
+copyToDestDir($${PWD}/db/items_database.sqlite, $$OUT_PWD/$${VARIANT}/)

@@ -20,12 +20,14 @@ public:
     explicit Item(QWidget *parent = nullptr);
     ~Item();
     void SetItem(int item_id);
-    void PlaySound();
     const QIcon &GetIcon() const;
     void SetIcon(QIcon);
     const QString &GetItemType() const;
     void SetItemType(QString);
+    void PlaySound();
+    // воспроизведение звука предмета
     void SetDataBaseSource(DataBase *);
+    // установка актуального менеджера БД
 
 protected:
     void paintEvent(QPaintEvent *event) override;
@@ -41,7 +43,6 @@ private:
     QSoundEffect *item_sound_;
     DataBase *db_source_;
 };
-
 
 Q_DECLARE_METATYPE(Item*);
 

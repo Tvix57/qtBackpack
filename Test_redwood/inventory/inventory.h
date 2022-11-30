@@ -9,8 +9,8 @@
 
 #include "database.h"
 
-#define ROW_HEIGHT 50
-#define COLUMN_WIDHT 50
+#define ROW_HEIGHT 51
+#define COLUMN_WIDHT 51
 
 class Inventory : public QTableWidget
 {
@@ -24,6 +24,7 @@ public:
     void SetRows(int);
     void SetColumns(int);
     void SetDataBaseSource(DataBase *);
+    //установка указателя на акутального менеджера БД
 
 protected:
     virtual void dragEnterEvent(QDragEnterEvent * event) override;
@@ -31,19 +32,27 @@ protected:
     virtual void dropEvent(QDropEvent *event) override;
     virtual void dragLeaveEvent(QDragLeaveEvent *event) override;
     virtual void mousePressEvent(QMouseEvent *event) override;
+    virtual void mouseReleaseEvent(QMouseEvent *event) override;
 
 private:
     void AddItem(QPoint, const QMimeData *);
-    void MoveItem(QPoint, QPoint);
+    //добавление нового предмета в tabWidget на основе данных полученных из mimedata;
+    void MoveItem(QPoint, const QMimeData *);
+    //функция
     void RemoveItem(QPoint&);
+    //удаление предмета из таблицы
     QPoint GetItemPosition(QPoint);
+    // получение табличных координат предмета или события в таблице
     void WriteDB();
+    //загрузка данных В бд
     void ReadDB();
+    // //загрузка данных ИЗ бд
     void SetInventorySettings();
-    void ReplaceItems(QPoint&, QPoint&);
+    // установка настроек виджета таблицы
+    void ReplaceItems(QPoint&, const QMimeData *);
+    // функция свапа элементов таблицы с разными id
     int rows_, columns_;
     DataBase * db_source_;
-
 };
 
 #endif // INVENTORY_H

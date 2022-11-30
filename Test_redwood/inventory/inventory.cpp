@@ -16,35 +16,46 @@ Inventory::~Inventory() {
 }
 
 void Inventory::mousePressEvent(QMouseEvent *event) {
-    QPoint info = GetItemPosition(event->pos());
-    QTableWidgetItem * item_in_inventory = item(info.x(), info.y());
+    QPoint item_position = GetItemPosition(event->pos());
+    QTableWidgetItem * item_in_inventory = item(item_position.x(), item_position.y());
     if (item_in_inventory) {
         int id = item_in_inventory->data(Qt::UserRole).toInt();
         int count = item_in_inventory->data(Qt::DisplayRole).toInt();
-
         if (event->button() == Qt::LeftButton) {
             QDrag *drag = new QDrag(this);
             QMimeData *mimeData = new QMimeData;
-
+            item_in_inventory = takeItem(item_position.x(), item_position.y());
             mimeData->setData("ItemId", QVariant(id).toByteArray());
             mimeData->setData("ItemCount", QVariant(count).toByteArray());
-            mimeData->setData("StartPointX" , QVariant(info.x()).toByteArray());
-            mimeData->setData("StartPointY" , QVariant(info.y()).toByteArray());
+            mimeData->setData("StartPointX" , QVariant(item_position.x()).toByteArray());
+            mimeData->setData("StartPointY" , QVariant(item_position.y()).toByteArray());
 
             drag->setMimeData(mimeData);
             drag->setPixmap(item_in_inventory->background().texture());
 
             drag->exec(Qt::MoveAction);
-        } else if (event->button() == Qt::RightButton) {
-            Item *tmp = new Item(this);
-            tmp->SetItem(id);
-            tmp->PlaySound();
-            if (count > 1) {
-                --count;
-                item_in_inventory->setData(Qt::DisplayRole, count);
-            } else {
-                RemoveItem(info);
-            }
+        }
+    }
+    event->accept();
+}
+
+void Inventory::mouseReleaseEvent(QMouseEvent *event) {
+    QPoint item_position = GetItemPosition(event->pos());
+    QTableWidgetItem * item_in_inventory = item(item_position.x(), item_position.y());
+    if (item_in_inventory) {
+        int id = item_in_inventory->data(Qt::UserRole).toInt();
+        int count = item_in_inventory->data(Qt::DisplayRole).toInt();
+        if (event->button() == Qt::RightButton) {
+                Item *tmp = new Item(this);
+                tmp->SetDataBaseSource(db_source_);
+                tmp->SetItem(id);
+                tmp->PlaySound();
+                if (count > 1) {
+                    --count;
+                    item_in_inventory->setData(Qt::DisplayRole, count);
+                } else {
+                    RemoveItem(item_position);
+                }
         }
     }
     event->accept();
@@ -89,9 +100,11 @@ void Inventory::dropEvent(QDropEvent *event) {
                 QPoint start_point (QVariant(event->mimeData()->data("StartPointX")).toInt(),
                                     QVariant(event->mimeData()->data("StartPointY")).toInt());
                 if (start_point != drop_point) {
-                    MoveItem(drop_point, start_point);
-                    event->accept();
+                    MoveItem(drop_point, event->mimeData());
+                } else {
+                    AddItem(start_point, event->mimeData());
                 }
+                event->accept();
             }
         } else {
             AddItem(drop_point, event->mimeData());
@@ -110,6 +123,7 @@ void Inventory::AddItem(QPoint drop_point, const QMimeData *data_input) {
     int num = QVariant(data_input->data("ItemCount")).toInt();
     if (!item_in_inventory) {
         Item * item = new Item(this);
+        item->SetDataBaseSource(db_source_);
         item->SetItem(id);
         item_in_inventory = new  QTableWidgetItem();
         item_in_inventory->setFlags(Qt::ItemIsDragEnabled |
@@ -128,20 +142,19 @@ void Inventory::AddItem(QPoint drop_point, const QMimeData *data_input) {
     }
 }
 
-void Inventory::MoveItem(QPoint drop_point, QPoint start_point) {
+void Inventory::MoveItem(QPoint drop_point, const QMimeData *data_input) {
     QTableWidgetItem *item_drop = item(drop_point.x(), drop_point.y());
     if (item_drop) {
-         QTableWidgetItem *item_start = item(start_point.x(), start_point.y());
-         if (item_start->data(Qt::UserRole).toInt() == item_drop->data(Qt::UserRole).toInt()) {
+        int id = QVariant(data_input->data("ItemId")).toInt();
+        if (id == item_drop->data(Qt::UserRole).toInt()) {
              int num = item_drop->data(Qt::DisplayRole).toInt();
-             num += item_start->data(Qt::DisplayRole).toInt();
+             num += QVariant(data_input->data("ItemCount")).toInt();
              item_drop->setData(Qt::DisplayRole, num);
-             RemoveItem(start_point);
          } else {
-            ReplaceItems(drop_point, start_point);
+            ReplaceItems(drop_point, data_input);
          }
     } else {
-        setItem(drop_point.x(), drop_point.y(), takeItem(start_point.x(), start_point.y()));
+        AddItem(drop_point, data_input);
     }
 }
 
@@ -164,7 +177,7 @@ void Inventory::WriteDB() {
     db_source_->ClearInventoryDB();
     for(int i = 0; i < rows_; ++i) {
         for(int j = 0; j < columns_; ++j) {
-            QTableWidgetItem * cur_item = itemAt(i,j);
+            QTableWidgetItem * cur_item = item(i,j);
             if (cur_item) {
                 QList<QString> list;
                 list << QString::number(i * rows_ + j);
@@ -178,45 +191,45 @@ void Inventory::WriteDB() {
 
 void Inventory::ReadDB() {
     auto db_data = db_source_->GetInventoryData();
-    for (auto &item : db_data) {
+    for (auto item = db_data.begin(); item!=db_data.end(); item++) {
         QMimeData tmp_data;
         QPoint position;
-        position.setX(db_data.key(item) / rows_);
-        position.setY(db_data.key(item) % rows_);
-        tmp_data.setData("ItemId", item.value("item_id").toByteArray());
-        tmp_data.setData("ItemCount", item.value("item_count").toByteArray());
+        position.setX(item.key() / rows_);
+        position.setY(item.key() % rows_);
+        tmp_data.setData("ItemId", QVariant(item->value("item_id").toInt()).toByteArray());
+        tmp_data.setData("ItemCount", QVariant(item->value("item_count").toInt()).toByteArray());
         AddItem(position, &tmp_data);
     }
 }
 
 void Inventory::SetInventorySettings() {
-    verticalHeader()->setMinimumSectionSize(ROW_HEIGHT);
-    verticalHeader()->setMaximumSectionSize(ROW_HEIGHT);
-    verticalHeader()->setVisible(false);
-    verticalScrollBar()->setDisabled(true);
-    setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    verticalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+    setRowCount(rows_);
+    setColumnCount(columns_);
 
-    horizontalHeader()->setMinimumSectionSize(COLUMN_WIDHT);
-    horizontalHeader()->setMaximumSectionSize(COLUMN_WIDHT);
+    horizontalHeader()->setDefaultSectionSize(COLUMN_WIDHT);
     horizontalHeader()->setVisible(false);
+    horizontalHeader()->setSectionResizeMode(QHeaderView::Fixed);
     horizontalScrollBar()->setDisabled(true);
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
 
-    resizeRowsToContents();
-    resizeColumnsToContents();
+    verticalHeader()->setDefaultSectionSize(ROW_HEIGHT);
+    verticalHeader()->setVisible(false);
+    verticalHeader()->setSectionResizeMode(QHeaderView::Fixed);
+    verticalScrollBar()->setDisabled(true);
+    setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+
+    setFixedSize((ROW_HEIGHT)*rows_, (COLUMN_WIDHT)*columns_);
+    setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 
     setDragEnabled(true);
     setAcceptDrops(true);
     setDragDropMode(QAbstractItemView::DragDrop);
-    setRowCount(rows_);
-    setColumnCount(columns_);
 }
 
-void Inventory::ReplaceItems(QPoint & curent_point, QPoint & old_point) {
+void Inventory::ReplaceItems(QPoint & curent_point, const QMimeData * data_input) {
     QTableWidgetItem * cur_item = takeItem(curent_point.x(), curent_point.y());
-    QTableWidgetItem * old_item = takeItem(old_point.x(), old_point.y());
-    setItem(curent_point.x(), curent_point.y(), old_item);
-    setItem(old_point.x(), old_point.y(), cur_item);
+    AddItem(curent_point, data_input);
+    QPoint start_point (QVariant(data_input->data("StartPointX")).toInt(),
+                        QVariant(data_input->data("StartPointY")).toInt());
+    setItem(start_point.x(), start_point.y(), cur_item);
 }
