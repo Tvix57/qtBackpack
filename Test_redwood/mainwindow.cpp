@@ -22,12 +22,7 @@ void MainWindow::on_exit_btn_clicked() {
 }
 
 void MainWindow::on_new_game_btn_clicked() {
-    if (game_field_) {
-         connect(game_field_, SIGNAL(destroyed()), this, SLOT(CreateNewGameField()));
-         delete game_field_;
-    } else {
-        CreateNewGameField();
-    }
+    CreateNewGameField();
 }
 
 void MainWindow::CreateNewGameField() {
@@ -36,3 +31,14 @@ void MainWindow::CreateNewGameField() {
     this->hide();
     game_field_->show();
 }
+
+void MainWindow::on_continuebtn_clicked()
+{
+    if (game_field_) {
+        connect(game_field_, SIGNAL(destroyed()), this, SLOT(CreateNewGameField()));
+        delete game_field_;
+    } else {
+        CreateNewGameField();
+    }
+}
+
